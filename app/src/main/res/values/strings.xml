@@ -4,4 +4,16 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_play">Play</string>
+    <string name="txtNoBt">I am sorry, but Your phone does not support BT</string>
+    <string name="txtTurnOnBT">Bluetooth is now enabled</string>
+    <string name="txtBtOn">Bluetooth is enabled</string>
+    <string name="txtBtOff">Bluetooth is not enabled</string>
+    <string name="txtBtErr">You have to turn BT on to use this app</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="configHeader">Paired devices:</string>
+    <string name="findNXTbutt">Find new NXT</string>
+    <string name="title_activity_list_item">listItem</string>
+    <string name="title_activity_motor_control">MotorControl</string>
+
+
 </resources>
