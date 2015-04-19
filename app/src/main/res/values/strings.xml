@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">NXT Table</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -14,6 +14,21 @@
     <string name="findNXTbutt">Find new NXT</string>
     <string name="title_activity_list_item">listItem</string>
     <string name="title_activity_motor_control">MotorControl</string>
+    <string name="title_activity_level">LevelActivity</string>
+    <string name="A">A</string>
+    <string name="B">B</string>
+    <string name="C">C</string>
+    <string name="plusButton">+</string>
+    <string name="minusButton">-</string>
+    <string name="motorX">MOTOR X</string>
+    <string name="motorY">MOTOR Y</string>
+    <string name="accept">Accept</string>
+    <string name="gear">GEAR</string>
+    <string name="rev">REV</string>
+    <string name="title_activity_info">InfoActivity</string>
+    <string name="infoTitle">How to use this app?</string>
+    <string name="usingApp">\tFirstly, connect to NXT, You want to use to steer Your NXT table.\n\n\tTo do this, click on the settings image and choose NXT\'s MAC address to connect via Bluetooth.\n\tYou will be automatically moved to the play activity, in which You steer the connected NXT table via Bluetooth, using Your phone\'s accelerometer.\n\n\tIf You want to adjust speed or rotation direction of the motors or just level the table choose the level button.\n</string>
+
 
 
 </resources>

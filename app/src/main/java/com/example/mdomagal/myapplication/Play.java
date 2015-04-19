@@ -6,29 +6,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.hardware.SensorEventListener;
 
@@ -39,33 +25,19 @@ public class Play extends ActionBarActivity implements SensorEventListener {
     private Sensor mAccelerometer;
     private float gravity[];
 
-    private TextView accelX;
-    private TextView accelY;
-
-    private TextView actVar;
-
     private ImageView ball;
 
     private float startX;
     private float startY;
 
-//    private int tableXfin = 0;
-    private float tableX = 0;
-    private float prevVar = 0;
-
     private  RelativeLayout relLay;
+
+    private int scale;
 
     BTmaintenance bt;
 
-    //regulator strojenie
-    private double Kp = 1;
-    private double Ki = 0;
-    private double Kd = 0;
-
-    private final int MOTOR_A = 0;
-    private final int MOTOR_B = 1;
-
-    private double prev = 0;
+    private float prevX = 0;
+    private float prevY = 0;
 
     static int ACCE_FILTER_DATA_MIN_TIME = 200; // 200ms
     long lastSaved = System.currentTimeMillis();
@@ -80,45 +52,16 @@ public class Play extends ActionBarActivity implements SensorEventListener {
 
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        actVar = (TextView) findViewById(R.id.act);
-
         ball = (ImageView) findViewById(R.id.ball);
 
         relLay = (RelativeLayout) findViewById(R.id.relLay);
 
-        accelX = (TextView) findViewById(R.id.accelX);
-        accelY = (TextView) findViewById(R.id.accelY);
-
         bt = BTmaintenance.getInstance(); //singleton Bluetooth
-//        bt.rotateTo(0,0);
 
-        //regulator
-        final EditText KpField = (EditText) findViewById(R.id.editText);
-        final EditText KiField = (EditText) findViewById(R.id.editText2);
-        final EditText KdField = (EditText) findViewById(R.id.editText3);
-
-        final Button accept = (Button) findViewById(R.id.button);
-        accept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Kp = Double.parseDouble(KpField.getText().toString());
-                Ki = Double.parseDouble(KiField.getText().toString());
-                Kd = Double.parseDouble(KdField.getText().toString());
-            }
-        });
-
-        final Button motroControl = (Button) findViewById(R.id.button2);
-        motroControl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Play.this, MotorControl.class);
-                Play.this.startActivity(i);
-            }
-        });
+        scale = bt.getScale(); //ospowiada za wielkość ruchu silnika - musi być ustalana przy kalibracji
 
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
-
     }
 
     @Override
@@ -147,16 +90,18 @@ public class Play extends ActionBarActivity implements SensorEventListener {
 
         protected void onPause() {
             super.onPause();
-            bt.changeMotorSpeed(0,0);
-//            bt.reset(0);
+            bt.changeMotorSpeed(bt.getMotorX(),0);
+            bt.changeMotorSpeed(bt.getMotorY(),0);
             mSensorManager.unregisterListener(this);
-//            unregisterReceiver(mReceiver);(
         }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
+
+        bt.changeMotorSpeed(bt.getMotorX(),0);
+        bt.changeMotorSpeed(bt.getMotorY(),0);
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -178,11 +123,6 @@ public class Play extends ActionBarActivity implements SensorEventListener {
                     float y = gravity[1];
                     float z = gravity[2];
 
-                    // algorytm co ma się dziać po zmianie wartości na akcelerometrze
-
-                    accelY.setText(Float.toString(y));
-                    accelX.setText(Float.toString(x));
-
                     onAccelChange(x, y);
                 }
             }
@@ -190,13 +130,17 @@ public class Play extends ActionBarActivity implements SensorEventListener {
 
     private void onAccelChange(float x, float y){
 
-        final int scale = 20; //ospowiada za wielkość ruchu silnika - musi być ustalana przy kalibracji
+        //******************USTAWIENIE OBRAZKA*****************
+        int scaleBall = 20;
+        float ballA = scaleBall * x;
+        float ballB = scaleBall * y;
 
-        float a = scale * x;
-        float b = scale * y;
+        ball.setX(startX - ballA);
+        ball.setY(startY + ballB);
 
-        ball.setX(startX - a);
-        ball.setY(startY + b);
+        //******************WYSTEROWANIE STOLIKA*****************
+        float a = scale * x; //wartość wychylenia X przeskalowana
+        float b = scale * y; //wartość wychylenia Y przeskalowana
 
         if(bt.success)
         {
@@ -205,55 +149,47 @@ public class Play extends ActionBarActivity implements SensorEventListener {
             //tableX - aktualne wychylenie stolika (float) tableX -> a
             //epsilon - odchyłka - różnica między zadanym a aktualnym położeniem stolika (float)
 
-            int speed = 0;
+            int speedX = 0, speedY = 0;
 
-            float epsilon = a - tableX;
+            float epsilonX = a - prevX;
+            float epsilonY = b - prevY;
 
-            float abs_epsilon = Math.abs(epsilon);
+            float abs_epsilonX = Math.abs(epsilonX);
+            float abs_epsilonY = Math.abs(epsilonY);
 
-            if(abs_epsilon>10)
+            int s0 = 2;
+            int x0 = 15; //setX0.getProgress();
+
+
+            if(abs_epsilonX>s0)
             {
-                speed+= 10;
-                if(abs_epsilon>50)
-                {
-                    speed+= 15;
-                    if(abs_epsilon>100)
-                    {
-                        speed+= 20;
-                    }
-                }
+                speedX+= x0 + abs_epsilonX / scale * 10 - Math.pow(abs_epsilonX/(2*scale), 2);
+//
             }
 
-            speed *= (epsilon/abs_epsilon); //ustalenie znaku (+/-)
+            if(abs_epsilonY>s0)
+            {
+                speedY+= x0 + abs_epsilonY / scale * 10 - Math.pow(abs_epsilonY/(2*scale), 2);
+//
+            }
 
-            bt.changeMotorSpeed(MOTOR_A,speed);
+            speedX *= (epsilonX/abs_epsilonX); //ustalenie znaku (+/-)
+            speedY *= (epsilonY/abs_epsilonY);
 
-            tableX += speed;
 
-            //rusz stolikiem w odpowiednią stronę
-            //a - pozycja do której dąży stolik (-10..0..10)
-            //tableX - aktualna pozycja stolika
-            //na razie najlepiej
-            //go = act
-//                    float kP = 2;
-//                    double Td = 0.2;
-//                    double move = kP * (act + Td* (act - prevVar));
-//                    int go = ((int) move);
-//                    bt.changeMotorSpeed(0, go);
-//                    tableX += go; //=== tableX = a;
-//                    prevVar = act;
+            if(!bt.getDirectionX())
+                speedX *= -1;
 
-//            double act = a - tableX; // różnica między tym co chcę, a tym co mam (odchyłka w regulatorze) - pierwsza wersja wstawiane do silnika
+            if(!bt.getDirectionY())
+                speedY *= -1;
 
-//            double var = Kp*(act + Ki*(act+prev)/2 + Kd*(act-prev)); //wartość wstawiana
+            bt.changeMotorSpeed(bt.getMotorX(), speedX);
+            bt.changeMotorSpeed(bt.getMotorY(), speedY);
 
-//            double var = 10*act;
 
-//            tableX += var;
+            prevX = a;
+            prevY = b;
 
-//            bt.changeMotorSpeed(0, (int)var);
-
-//            prev = act;
 
             /**
             int speed = 80; //regulacja kierunku ruchu za pomocą prędkości silnika
@@ -328,13 +264,8 @@ public class Play extends ActionBarActivity implements SensorEventListener {
         }
     };
 
-    private void manageOnBtChanged(boolean _btON)
+    private void manageOnBtChanged(boolean _btON) //wyłączenie BT
     {
-//        playButton.setClickable(_btON);
-//        settingsButton.setClickable(_btON);
-        //inne przyciski
-
-//        bt.enableButton(_btON, backgroundSettings, getApplicationContext());
         finish();
     }
 }

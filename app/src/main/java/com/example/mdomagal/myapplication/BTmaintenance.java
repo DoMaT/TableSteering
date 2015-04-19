@@ -3,9 +3,12 @@ package com.example.mdomagal.myapplication;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -13,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static android.support.v4.app.ActivityCompat.startActivityForResult;
@@ -30,6 +34,7 @@ public class BTmaintenance {
 
     private BTmaintenance(){ //prywatny konstruktor - nie pozwala zainicjować tego w innej klasie
         mBluetoothAdapter  = BluetoothAdapter.getDefaultAdapter();
+
     }
 
     public static BTmaintenance getInstance(){ //zwraca obiekt klasy - singleton
@@ -53,6 +58,24 @@ public class BTmaintenance {
 
     protected boolean success=false; //czy udało się połączyć
 
+    //*************WARTOŚCI PORTÓW SILNIKÓW***********
+    private static final int MOTOR_A = 0;
+    private static final int MOTOR_B = 1;
+    private static final int MOTOR_C = 2;
+
+
+    //************USTAWIENIA PRZY KALIBRACJI*********
+
+    private int MOTOR_X = 0;
+    private int MOTOR_Y = 1;
+
+    private int directionX = 1;
+    private int directionY = 1;
+
+    private int scale = 20;
+
+
+    //***********************************************
 
     private boolean isBT(){
         if (mBluetoothAdapter == null)
@@ -83,6 +106,68 @@ public class BTmaintenance {
         {
             return NO_BT;
         }
+    }
+
+    protected int getMotorX(){
+        return MOTOR_X;
+    }
+
+    protected int getMotorY(){
+        return MOTOR_Y;
+    }
+
+    protected int getScale(){
+        return scale;
+    }
+
+    protected int getMotorA(){
+        return MOTOR_A;
+    }
+
+    protected int getMotorB(){
+        return MOTOR_B;
+    }
+
+    protected int getMotorC(){
+        return MOTOR_C;
+    }
+
+    protected boolean getDirectionX(){
+        if (directionX == 1)
+            return true;
+        else return false;
+    }
+
+    protected boolean getDirectionY(){
+        if(directionY == 1)
+            return true;
+        else return false;
+    }
+
+    protected void setDirectionX(boolean _dir){
+        if(_dir)
+            directionX = 1;
+        else
+            directionX = -1;
+    }
+
+    protected void setDirectionY(boolean _dir){
+        if(_dir)
+            directionY = 1;
+        else
+            directionY = -1;
+    }
+
+    protected void setScale(int _scale){
+        scale = _scale;
+    }
+
+    protected void setMotorX(int _x){
+        MOTOR_X = _x;
+    }
+
+    protected void setMotorY(int _y){
+        MOTOR_Y = _y;
     }
 
     protected boolean getState(){
@@ -117,6 +202,7 @@ public class BTmaintenance {
         return success;
 
     }
+
 
 
     protected void enableButton(boolean _btON, RelativeLayout _background, Context _context){

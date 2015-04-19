@@ -60,7 +60,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.4"/>
+            android:layout_weight="0.3"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -100,13 +100,41 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.4"/>
+            android:layout_weight="0.3"/>
 
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"></LinearLayout>
+            android:weightSum="3"
+            android:layout_weight="1">
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.33"
+                android:layout_height="match_parent" />
+
+            <com.example.mdomagal.myapplication.SquareImageButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height = "wrap_content"
+                android:id="@+id/infoButton"
+                android:background="@mipmap/info"
+                android:scaleType="centerInside"  />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.33"
+                android:layout_height="match_parent" />
+
+            <com.example.mdomagal.myapplication.SquareImageButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height = "wrap_content"
+                android:id="@+id/exitButton"
+                android:background="@mipmap/exit"
+                android:scaleType="centerInside"  />
+
+            </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -23,130 +23,19 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/accelX"
+        android:visibility="invisible"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
+        android:visibility="invisible"
         android:id="@+id/accelY"
         android:layout_below="@+id/accelX"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Accept"
-        android:id="@+id/button"
-        android:layout_alignTop="@+id/linearLayout"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:visibility="invisible"
-        android:layout_marginTop="35dp" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignRight="@+id/ball"
-        android:layout_alignEnd="@+id/ball"
-        android:weightSum="3"
-        android:layout_below="@+id/accelY"
-        android:layout_above="@+id/ball"
-        android:id="@+id/linearLayout">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="invisible"
-            android:layout_weight="1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Kp"
-                android:id="@+id/textView" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number|numberDecimal"
-                android:ems="10"
-                android:id="@+id/editText"
-                android:text="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="invisible"
-            android:layout_weight="1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Ki"
-                android:id="@+id/textView2" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number|numberDecimal"
-                android:ems="10"
-                android:id="@+id/editText2"
-                android:text="0" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="invisible"
-            android:layout_weight="1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Kd"
-                android:id="@+id/textView3" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:ems="10"
-                android:id="@+id/editText3"
-                android:layout_weight="1"
-                android:text="0" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MTCA"
-        android:id="@+id/button2"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/act"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/ball" />
+        android:layout_alignLeft="@+id/accelX"
+        android:layout_alignStart="@+id/accelX" />
 
 </RelativeLayout>
